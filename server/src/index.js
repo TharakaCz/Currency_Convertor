@@ -7,7 +7,7 @@ const app = express();
 //endpoint url
 const endpoint = "https://openexchangerates.org/api/";
 //api key
-const key = "bb1504eb43674dba817dca199dbedf9e";
+const key = "<your api key is here>";
 
 //middlewares
 app.use(express.json());
