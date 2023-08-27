@@ -10,12 +10,15 @@ export default function MainPage() {
   const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
   const [currencyNames, setCurrencyNames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(false);
 
   //Handle submit methord]
   const endpoint = "http://localhost:5000/";
   const passData = async (e) => {
     e.preventDefault();
     const url = `${endpoint}convert`;
+    setMessage(true);
+    setLoading(true);
     try {
       const respose = await axios.get(url, {
         params: {
@@ -27,6 +30,7 @@ export default function MainPage() {
       });
 
       setAmountInTargetCurrency(respose.data);
+      setMessage(false);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -84,14 +88,15 @@ export default function MainPage() {
               >
                 Select Source Currency :
               </label>
-              <select
+              <input
                 onChange={(e) => setSourceCurrency(e.target.value)}
                 type="text"
-                id={sourceCurrency}
+                list="sourceCurrencyList"
                 name={sourceCurrency}
                 value={sourceCurrency}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              >
+              />
+              <datalist id="sourceCurrencyList">
                 <option value="">Select source currency</option>
                 {/* Default empty option */}
                 {Object.keys(currencyNames).map((currency) => (
@@ -99,7 +104,7 @@ export default function MainPage() {
                     {currencyNames[currency]}
                   </option>
                 ))}
-              </select>
+              </datalist>
             </div>
 
             <div className="mb-4">
@@ -109,14 +114,15 @@ export default function MainPage() {
               >
                 Select Target Currency :
               </label>
-              <select
+              <input
                 onChange={(e) => setTargetCurrency(e.target.value)}
                 type="text"
-                id={targetCurrency}
+                list="targetCurrencyList"
                 name={targetCurrency}
                 value={targetCurrency}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              >
+              />
+              <datalist id="targetCurrencyList">
                 <option>Amount source currency</option>
                 {/* Default empty option */}
                 {Object.keys(currencyNames).map((currency) => (
@@ -124,7 +130,7 @@ export default function MainPage() {
                     {currencyNames[currency]}
                   </option>
                 ))}
-              </select>
+              </datalist>
             </div>
 
             <div className="mb-4">
@@ -149,10 +155,21 @@ export default function MainPage() {
           </form>
         </section>
       </div>
-      {!loading ? <section className="mt-5 text-center text-xl">
-        {amountInSourceCurrency} {currencyNames[sourceCurrency]} is equal to {" "}
-        <span className="text-green-500 font-bold">{" "} {amountInTargetCurrency}</span> {" "} in {currencyNames[targetCurrency]}
-      </section> : null}
+      {!loading ? (
+        <section className="mt-5 text-center text-xl">
+          {amountInSourceCurrency} {currencyNames[sourceCurrency]} is equal to{" "}
+          <span className="text-green-500 font-bold">
+            {" "}
+            {amountInTargetCurrency}
+          </span>{" "}
+          in {currencyNames[targetCurrency]}
+        </section>
+      ) : null}
+      {!message ? null : (
+        <p className="text-center text-xl text-green-500 mt-5">
+          Processing ...
+        </p>
+      )}
     </div>
   );
 }
